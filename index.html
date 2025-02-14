@@ -95,28 +95,38 @@
     <script>
         let activePlayers = 0; // Αρχικός αριθμός ενεργών παικτών
         const playerCompleted = [false, false, false, false, false]; // Κατάσταση ολοκλήρωσης για κάθε παίκτη
+        const playerSteps = [1, 1, 1, 1, 1]; // Τρέχον βήμα για κάθε παίκτη
 
         function showNextStep(player, stepId) {
-            document.getElementById(`${player}-${stepId}`).style.display = 'block';
+            document.getElementById(`${player}-step${stepId}`).style.display = 'block';
         }
 
-        function correctAnswer(player, stepId, nextStepId) {
-            // Απόκρυψη του τρέχοντος βήματος και εμφάνιση του επόμενου
-            document.getElementById(`${player}-${stepId}`).style.display = 'none';
-            if (nextStepId) {
-                showNextStep(player, nextStepId);
+        function correctAnswer(player, stepId) {
+            const playerIndex = parseInt(player.replace("player", "")) - 1;
+            playerSteps[playerIndex]++;
+
+            if (playerSteps[playerIndex] <= 10) {
+                // Απόκρυψη του τρέχοντος βήματος και εμφάνιση του επόμενου
+                document.getElementById(`${player}-step${stepId}`).style.display = 'none';
+                showNextStep(player, playerSteps[playerIndex]);
             } else {
                 // Ο παίκτης ολοκλήρωσε το παιχνίδι
-                const playerIndex = parseInt(player.replace("player", "")) - 1;
                 playerCompleted[playerIndex] = true;
+                activePlayers--;
 
                 // Έλεγχος αν ένας παίκτης έχει ολοκληρώσει πρώτος
-                if (playerCompleted.includes(true)) {
-                    activePlayers = 0; // Απενεργοποίηση όλων των παικτών
-                    const winnerIndex = playerCompleted.indexOf(true);
-                    const winner = `Παίκτης ${winnerIndex + 1}`;
-                    document.getElementById("winner-message").innerText = `🏆 ${winner} νίκησε! 🎉`;
+                if (activePlayers === 0) {
+                    document.getElementById("winner-message").innerText = `🏆 Παίκτης ${playerIndex + 1} νίκησε! 🎉`;
                     document.getElementById("winner-message").style.display = "block";
+
+                    // Απενεργοποίηση όλων των κουμπιών για τους υπόλοιπους παίκτες
+                    for (let i = 1; i <= 5; i++) {
+                        if (i !== playerIndex + 1) {
+                            const playerDiv = document.getElementById(`player${i}`);
+                            const buttons = playerDiv.querySelectorAll("button");
+                            buttons.forEach(button => button.disabled = true);
+                        }
+                    }
                 }
             }
         }
@@ -135,7 +145,7 @@
 
             // Εμφάνιση του πρώτου βήματος για κάθε παίκτη
             for (let i = 1; i <= numPlayers; i++) {
-                showNextStep(`player${i}`, 'step1');
+                showNextStep(`player${i}`, 1);
             }
         }
     </script>
@@ -165,27 +175,73 @@
                 <div class="player" id="player1">
                     <h2>Παίκτης 1 🎀</h2>
                     <div id="player1-step1" class="section">
-                        <p class="question">Ποιος ήταν ο ρόλος της Εκκλησίας του Δήμου στην αρχαία Αθήνα;</p>
+                        <p class="question">1. Ποιος ήταν ο Περικλής και τι ρόλο είχε στην Αθήνα;</p>
                         <div class="answers">
-                            <button onclick="correctAnswer('player1', 'step1', 'step2')">Έπαιρνε αποφάσεις για τους νόμους και την πολιτική 📜</button>
-                            <button onclick="wrongAnswer('player1')">Διοικούσε τον στρατό ⚔️</button>
-                            <button onclick="wrongAnswer('player1')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
+                            <button onclick="correctAnswer('player1', 1)">Άνθρωπος με μεγάλες ικανότητες, υπηρέτησε τη δημοκρατία</button>
+                            <button onclick="wrongAnswer('player1')">Ήταν στρατηγός που κυβέρνησε τη Σπάρτη</button>
                         </div>
                     </div>
                     <div id="player1-step2" class="section" style="display: none;">
-                        <p class="question">Ποιος ήταν ο ρόλος του Άρειου Πάγου πριν τις μεταρρυθμίσεις του Εφιάλτη;</p>
+                        <p class="question">2. Τι ήταν η μισθοφορία;</p>
                         <div class="answers">
-                            <button onclick="wrongAnswer('player1')">Διοικούσε τον στρατό ⚔️</button>
-                            <button onclick="correctAnswer('player1', 'step2', 'step3')">Ασκούσε δικαστική και πολιτική εξουσία 🏛️</button>
-                            <button onclick="wrongAnswer('player1')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
+                            <button onclick="correctAnswer('player1', 2)">Επίδομα για τους πιο άπορους</button>
+                            <button onclick="wrongAnswer('player1')">Ένα είδος φόρου για τους πλούσιους</button>
                         </div>
                     </div>
                     <div id="player1-step3" class="section" style="display: none;">
-                        <p class="question">Ποιος ήταν ο ρόλος της Βουλής των Πεντακοσίων;</p>
+                        <p class="question">3. Τι ήταν τα «θεωρικά»;</p>
                         <div class="answers">
-                            <button onclick="wrongAnswer('player1')">Διοικούσε τον στρατό ⚔️</button>
-                            <button onclick="correctAnswer('player1', 'step3', null)">Προετοίμαζε τα κείμενα των νόμων 📜</button>
-                            <button onclick="wrongAnswer('player1')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
+                            <button onclick="correctAnswer('player1', 3)">Χρήματα για να παρακολουθούν οι φτωχοί θέατρο</button>
+                            <button onclick="wrongAnswer('player1')">Ένα είδος στρατιωτικής εκπαίδευσης</button>
+                        </div>
+                    </div>
+                    <div id="player1-step4" class="section" style="display: none;">
+                        <p class="question">4. Ποιος ήταν ο ρόλος της Ηλιαίας;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player1', 4)">Πολυμελές λαϊκό δικαστήριο με 6.000 δικαστές</button>
+                            <button onclick="wrongAnswer('player1')">Το κυβερνητικό όργανο που διοικούσε τον στρατό</button>
+                        </div>
+                    </div>
+                    <div id="player1-step5" class="section" style="display: none;">
+                        <p class="question">5. Ποιος ήταν ο ρόλος της Βουλής των Πεντακοσίων;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player1', 5)">Προετοίμαζε τα κείμενα των νόμων</button>
+                            <button onclick="wrongAnswer('player1')">Διοικούσε τον στρατό και τον στόλο</button>
+                        </div>
+                    </div>
+                    <div id="player1-step6" class="section" style="display: none;">
+                        <p class="question">6. Τι ήταν οι λειτουργίες;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player1', 6)">Οικονομική βοήθεια από τους πλούσιους</button>
+                            <button onclick="wrongAnswer('player1')">Ένα είδος φορολογίας για τους δούλους</button>
+                        </div>
+                    </div>
+                    <div id="player1-step7" class="section" style="display: none;">
+                        <p class="question">7. Τι ήταν η Ειρήνη του Καλλία;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player1', 7)">Εξασφάλισε την ειρήνη με τους Πέρσες</button>
+                            <button onclick="wrongAnswer('player1')">Ένας πόλεμος εναντίον της Σπάρτης</button>
+                        </div>
+                    </div>
+                    <div id="player1-step8" class="section" style="display: none;">
+                        <p class="question">8. Ποιος ήταν ο ρόλος των μετοίκων στην Αθήνα;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player1', 8)">Ασχολούνταν με το εμπόριο και τη βιοτεχνία</button>
+                            <button onclick="wrongAnswer('player1')">Είχαν πλήρη πολιτικά δικαιώματα</button>
+                        </div>
+                    </div>
+                    <div id="player1-step9" class="section" style="display: none;">
+                        <p class="question">9. Ποιος ήταν ο ρόλος των δούλων στην Αθήνα;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player1', 9)">Εργάζονταν σε διάφορες εργασίες</button>
+                            <button onclick="wrongAnswer('player1')">Είχαν δικαίωμα ψήφου</button>
+                        </div>
+                    </div>
+                    <div id="player1-step10" class="section" style="display: none;">
+                        <p class="question">10. Τι ήταν η φάλαγγα;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player1', 10)">Βασική μονάδα του στρατού ξηράς</button>
+                            <button onclick="wrongAnswer('player1')">Ένα είδος πολιτιστικής εκδήλωσης</button>
                         </div>
                     </div>
                 </div>
@@ -194,27 +250,73 @@
                 <div class="player" id="player2">
                     <h2>Παίκτης 2 🌊</h2>
                     <div id="player2-step1" class="section">
-                        <p class="question">Ποιος ήταν ο ρόλος των στρατηγών στην Αθήνα;</p>
+                        <p class="question">1. Ποιος ήταν ο ρόλος της Εκκλησίας του Δήμου;</p>
                         <div class="answers">
-                            <button onclick="correctAnswer('player2', 'step1', 'step2')">Διοικούσαν τον στρατό και σχεδίαζαν εξωτερική πολιτική 🌍</button>
-                            <button onclick="wrongAnswer('player2')">Ασκούσαν δικαστική εξουσία ⚖️</button>
-                            <button onclick="wrongAnswer('player2')">Επέβαλλαν φόρους 💰</button>
+                            <button onclick="correctAnswer('player2', 1)">Ήταν το κυρίαρχο σώμα στο αθηναϊκό πολίτευμα</button>
+                            <button onclick="wrongAnswer('player2')">Διοικούσε τον στρατό</button>
                         </div>
                     </div>
                     <div id="player2-step2" class="section" style="display: none;">
-                        <p class="question">Ποιος ήταν ο ρόλος της Ηλιαίας;</p>
+                        <p class="question">2. Τι ήταν η Τριακονταετής Ειρήνη;</p>
                         <div class="answers">
-                            <button onclick="wrongAnswer('player2')">Διοικούσε τον στρατό ⚔️</button>
-                            <button onclick="correctAnswer('player2', 'step2', 'step3')">Ασκούσε δικαστική εξουσία ⚖️</button>
-                            <button onclick="wrongAnswer('player2')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
+                            <button onclick="correctAnswer('player2', 2)">Σύναψη ειρήνης με τη Σπάρτη το 446 π.Χ.</button>
+                            <button onclick="wrongAnswer('player2')">Ένας πόλεμος εναντίον των Περσών</button>
                         </div>
                     </div>
                     <div id="player2-step3" class="section" style="display: none;">
-                        <p class="question">Ποιος ήταν ο ρόλος των μετοίκων στην Αθήνα;</p>
+                        <p class="question">3. Ποιος ήταν ο ρόλος των στρατηγών;</p>
                         <div class="answers">
-                            <button onclick="wrongAnswer('player2')">Διοικούσαν τον στρατό ⚔️</button>
-                            <button onclick="correctAnswer('player2', 'step3', null)">Ασχολούνταν με το εμπόριο και τη βιοτεχνία 🛍️</button>
-                            <button onclick="wrongAnswer('player2')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
+                            <button onclick="correctAnswer('player2', 3)">Εσωτερική ασφάλεια, εξωτερική πολιτική, διοίκηση στρατού και στόλου</button>
+                            <button onclick="wrongAnswer('player2')">Διοίκηση των δικαστηρίων</button>
+                        </div>
+                    </div>
+                    <div id="player2-step4" class="section" style="display: none;">
+                        <p class="question">4. Τι ήταν η τριηραρχία;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player2', 4)">Συντήρηση και εξοπλισμός ενός πολεμικού σκάφους</button>
+                            <button onclick="wrongAnswer('player2')">Ένα είδος φορολογίας για τους δούλους</button>
+                        </div>
+                    </div>
+                    <div id="player2-step5" class="section" style="display: none;">
+                        <p class="question">5. Ποιος ήταν ο ρόλος των Αθηναίων πολιτών;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player2', 5)">Είχαν πλήρη πολιτικά δικαιώματα</button>
+                            <button onclick="wrongAnswer('player2')">Δεν είχαν δικαίωμα ψήφου</button>
+                        </div>
+                    </div>
+                    <div id="player2-step6" class="section" style="display: none;">
+                        <p class="question">6. Τι ήταν η χορηγία;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player2', 6)">Έξοδα για το ανέβασμα μιας τραγωδίας</button>
+                            <button onclick="wrongAnswer('player2')">Ένα είδος στρατιωτικής εκπαίδευσης</button>
+                        </div>
+                    </div>
+                    <div id="player2-step7" class="section" style="display: none;">
+                        <p class="question">7. Ποιος ήταν ο ρόλος των γυναικών στην Αθήνα;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player2', 7)">Αποκλειστική φροντίδα του σπιτιού και των παιδιών</button>
+                            <button onclick="wrongAnswer('player2')">Είχαν δικαίωμα ψήφου</button>
+                        </div>
+                    </div>
+                    <div id="player2-step8" class="section" style="display: none;">
+                        <p class="question">8. Τι ήταν η εφηβεία;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player2', 8)">Περίοδος στρατιωτικής εκπαίδευσης από 18–20 ετών</button>
+                            <button onclick="wrongAnswer('player2')">Ένα είδος πολιτιστικής εκδήλωσης</button>
+                        </div>
+                    </div>
+                    <div id="player2-step9" class="section" style="display: none;">
+                        <p class="question">9. Τι ήταν τα Μεγάλα Παναθήναια;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player2', 9)">Γιορτή προς τιμήν της Αθηνάς κάθε 4 χρόνια</button>
+                            <button onclick="wrongAnswer('player2')">Ένας ετήσιος αγώνας δρόμου</button>
+                        </div>
+                    </div>
+                    <div id="player2-step10" class="section" style="display: none;">
+                        <p class="question">10. Τι ήταν η γυμνασιαρχία;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player2', 10)">Καταβολή των εξόδων των αθλητών σε αγώνες</button>
+                            <button onclick="wrongAnswer('player2')">Ένα είδος φορολογίας για τους δούλους</button>
                         </div>
                     </div>
                 </div>
@@ -223,27 +325,73 @@
                 <div class="player" id="player3">
                     <h2>Παίκτης 3 🌿</h2>
                     <div id="player3-step1" class="section">
-                        <p class="question">Ποιος ήταν ο σκοπός των Μεγάλων Παναθηναίων;</p>
+                        <p class="question">1. Ποιος ήταν ο ρόλος του Άρειου Πάγου;</p>
                         <div class="answers">
-                            <button onclick="correctAnswer('player3', 'step1', 'step2')">Ψυχαγωγία των πολιτών και επίδειξη δύναμης 🎭</button>
-                            <button onclick="wrongAnswer('player3')">Εορτασμός της νίκης επί των Περσών ⚔️</button>
-                            <button onclick="wrongAnswer('player3')">Εμπόριο 💰</button>
+                            <button onclick="correctAnswer('player3', 1)">Απονομή δικαιοσύνης σε περιπτώσεις φόνου και εμπρησμού</button>
+                            <button onclick="wrongAnswer('player3')">Διοίκηση του στρατού</button>
                         </div>
                     </div>
                     <div id="player3-step2" class="section" style="display: none;">
-                        <p class="question">Ποιος ήταν ο σκοπός της εκπαίδευσης στην αρχαία Αθήνα;</p>
+                        <p class="question">2. Τι ήταν η εστίαση;</p>
                         <div class="answers">
-                            <button onclick="wrongAnswer('player3')">Στρατιωτική εκπαίδευση ⚔️</button>
-                            <button onclick="correctAnswer('player3', 'step2', 'step3')">Αρμονική καλλιέργεια σώματος και πνεύματος 🧠</button>
-                            <button onclick="wrongAnswer('player3')">Θρησκευτική εκπαίδευση 🙏</button>
+                            <button onclick="correctAnswer('player3', 2)">Παροχή χρημάτων για δημόσια γεύματα</button>
+                            <button onclick="wrongAnswer('player3')">Ένα είδος στρατιωτικής εκπαίδευσης</button>
                         </div>
                     </div>
                     <div id="player3-step3" class="section" style="display: none;">
-                        <p class="question">Ποιος ήταν ο ρόλος της Βουλής των Πεντακοσίων;</p>
+                        <p class="question">3. Ποιος ήταν ο ρόλος των παιδαγωγών;</p>
                         <div class="answers">
-                            <button onclick="wrongAnswer('player3')">Διοικούσε τον στρατό ⚔️</button>
-                            <button onclick="correctAnswer('player3', 'step3', null)">Προετοίμαζε τα κείμενα των νόμων 📜</button>
-                            <button onclick="wrongAnswer('player3')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
+                            <button onclick="correctAnswer('player3', 3)">Έμπιστος δούλος συνοδός του μαθητή</button>
+                            <button onclick="wrongAnswer('player3')">Δάσκαλος γυμναστικής</button>
+                        </div>
+                    </div>
+                    <div id="player3-step4" class="section" style="display: none;">
+                        <p class="question">4. Τι ήταν τα Μικρά Παναθήναια;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player3', 4)">Γιορτή προς τιμήν της Αθηνάς κάθε χρόνο</button>
+                            <button onclick="wrongAnswer('player3')">Ένας ετήσιος αγώνας δρόμου</button>
+                        </div>
+                    </div>
+                    <div id="player3-step5" class="section" style="display: none;">
+                        <p class="question">5. Ποιος ήταν ο ρόλος των σοφιστών;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player3', 5)">Δίδασκαν την ρητορική τέχνη</button>
+                            <button onclick="wrongAnswer('player3')">Διοίκηση των δικαστηρίων</button>
+                        </div>
+                    </div>
+                    <div id="player3-step6" class="section" style="display: none;">
+                        <p class="question">6. Τι ήταν η θεωρία;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player3', 6)">Έξοδα για αποστολή αντιπροσωπειών σε θρησκευτικές γιορτές</button>
+                            <button onclick="wrongAnswer('player3')">Ένα είδος φορολογίας για τους δούλους</button>
+                        </div>
+                    </div>
+                    <div id="player3-step7" class="section" style="display: none;">
+                        <p class="question">7. Ποιος ήταν ο ρόλος των κοριτσιών στην Αθήνα;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player3', 7)">Διδάσκονταν τις οικιακές εργασίες από τη μητέρα τους</button>
+                            <button onclick="wrongAnswer('player3')">Είχαν δικαίωμα ψήφου</button>
+                        </div>
+                    </div>
+                    <div id="player3-step8" class="section" style="display: none;">
+                        <p class="question">8. Τι ήταν τα Ανθεστήρια;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player3', 8)">Μια από τις μικρότερες γιορτές της Αθήνας</button>
+                            <button onclick="wrongAnswer('player3')">Ένας ετήσιος αγώνας δρόμου</button>
+                        </div>
+                    </div>
+                    <div id="player3-step9" class="section" style="display: none;">
+                        <p class="question">9. Ποιος ήταν ο ρόλος των κιθαριστών;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player3', 9)">Δίδασκαν μουσική</button>
+                            <button onclick="wrongAnswer('player3')">Διοίκηση των δικαστηρίων</button>
+                        </div>
+                    </div>
+                    <div id="player3-step10" class="section" style="display: none;">
+                        <p class="question">10. Τι ήταν η εφηβεία;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player3', 10)">Περίοδος στρατιωτικής εκπαίδευσης από 18–20 ετών</button>
+                            <button onclick="wrongAnswer('player3')">Ένα είδος πολιτιστικής εκδήλωσης</button>
                         </div>
                     </div>
                 </div>
@@ -252,27 +400,73 @@
                 <div class="player" id="player4">
                     <h2>Παίκτης 4 🌟</h2>
                     <div id="player4-step1" class="section">
-                        <p class="question">Ποιος ήταν ο ρόλος των θεωρικών;</p>
+                        <p class="question">1. Τι ήταν η χορηγία;</p>
                         <div class="answers">
-                            <button onclick="correctAnswer('player4', 'step1', 'step2')">Επίδομα για τους φτωχούς ώστε να παρακολουθούν θέατρο 🎟️</button>
-                            <button onclick="wrongAnswer('player4')">Φόρος στους ξένους εμπόρους 💰</button>
-                            <button onclick="wrongAnswer('player4')">Αμοιβή στρατηγών ⚔️</button>
+                            <button onclick="correctAnswer('player4', 1)">Έξοδα για το ανέβασμα μιας τραγωδίας</button>
+                            <button onclick="wrongAnswer('player4')">Ένα είδος στρατιωτικής εκπαίδευσης</button>
                         </div>
                     </div>
                     <div id="player4-step2" class="section" style="display: none;">
-                        <p class="question">Ποιος ήταν ο ρόλος των δούλων στην Αθήνα;</p>
+                        <p class="question">2. Ποιος ήταν ο ρόλος των παιδοτριβών;</p>
                         <div class="answers">
-                            <button onclick="wrongAnswer('player4')">Διοικούσαν τον στρατό ⚔️</button>
-                            <button onclick="correctAnswer('player4', 'step2', 'step3')">Εργάζονταν σε διάφορες εργασίες 🛠️</button>
-                            <button onclick="wrongAnswer('player4')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
+                            <button onclick="correctAnswer('player4', 2)">Δίδασκαν γυμναστική</button>
+                            <button onclick="wrongAnswer('player4')">Διοίκηση των δικαστηρίων</button>
                         </div>
                     </div>
                     <div id="player4-step3" class="section" style="display: none;">
-                        <p class="question">Ποιος ήταν ο σκοπός της Ειρήνης του Καλλία;</p>
+                        <p class="question">3. Τι ήταν τα Λήναια;</p>
                         <div class="answers">
-                            <button onclick="wrongAnswer('player4')">Ενοποίηση των ελληνικών πόλεων 🏛️</button>
-                            <button onclick="correctAnswer('player4', 'step3', null)">Εξασφάλιση ειρήνης με τους Πέρσες 🌍</button>
-                            <button onclick="wrongAnswer('player4')">Αύξηση του εμπορίου 💰</button>
+                            <button onclick="correctAnswer('player4', 3)">Μια από τις μικρότερες γιορτές της Αθήνας</button>
+                            <button onclick="wrongAnswer('player4')">Ένας ετήσιος αγώνας δρόμου</button>
+                        </div>
+                    </div>
+                    <div id="player4-step4" class="section" style="display: none;">
+                        <p class="question">4. Ποιος ήταν ο ρόλος των γραμματιστών;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player4', 4)">Δίδασκαν ανάγνωση, γραφή και αριθμητική</button>
+                            <button onclick="wrongAnswer('player4')">Διοίκηση των δικαστηρίων</button>
+                        </div>
+                    </div>
+                    <div id="player4-step5" class="section" style="display: none;">
+                        <p class="question">5. Τι ήταν η εστίαση;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player4', 5)">Παροχή χρημάτων για δημόσια γεύματα</button>
+                            <button onclick="wrongAnswer('player4')">Ένα είδος στρατιωτικής εκπαίδευσης</button>
+                        </div>
+                    </div>
+                    <div id="player4-step6" class="section" style="display: none;">
+                        <p class="question">6. Ποιος ήταν ο ρόλος των γυναικών στην Αθήνα;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player4', 6)">Αποκλειστική φροντίδα του σπιτιού και των παιδιών</button>
+                            <button onclick="wrongAnswer('player4')">Είχαν δικαίωμα ψήφου</button>
+                        </div>
+                    </div>
+                    <div id="player4-step7" class="section" style="display: none;">
+                        <p class="question">7. Τι ήταν τα Μικρά Παναθήναια;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player4', 7)">Γιορτή προς τιμήν της Αθηνάς κάθε χρόνο</button>
+                            <button onclick="wrongAnswer('player4')">Ένας ετήσιος αγώνας δρόμου</button>
+                        </div>
+                    </div>
+                    <div id="player4-step8" class="section" style="display: none;">
+                        <p class="question">8. Ποιος ήταν ο ρόλος των σοφιστών;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player4', 8)">Δίδασκαν την ρητορική τέχνη</button>
+                            <button onclick="wrongAnswer('player4')">Διοίκηση των δικαστηρίων</button>
+                        </div>
+                    </div>
+                    <div id="player4-step9" class="section" style="display: none;">
+                        <p class="question">9. Τι ήταν η θεωρία;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player4', 9)">Έξοδα για αποστολή αντιπροσωπειών σε θρησκευτικές γιορτές</button>
+                            <button onclick="wrongAnswer('player4')">Ένα είδος φορολογίας για τους δούλους</button>
+                        </div>
+                    </div>
+                    <div id="player4-step10" class="section" style="display: none;">
+                        <p class="question">10. Τι ήταν η εφηβεία;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player4', 10)">Περίοδος στρατιωτικής εκπαίδευσης από 18–20 ετών</button>
+                            <button onclick="wrongAnswer('player4')">Ένα είδος πολιτιστικής εκδήλωσης</button>
                         </div>
                     </div>
                 </div>
@@ -281,27 +475,73 @@
                 <div class="player" id="player5">
                     <h2>Παίκτης 5 🌈</h2>
                     <div id="player5-step1" class="section">
-                        <p class="question">Ποιος ήταν ο ρόλος των λειτουργιών στην Αθήνα;</p>
+                        <p class="question">1. Τι ήταν η τριηραρχία;</p>
                         <div class="answers">
-                            <button onclick="correctAnswer('player5', 'step1', 'step2')">Οικονομική βοήθεια από τους πλούσιους στο κράτος 💰</button>
-                            <button onclick="wrongAnswer('player5')">Διοίκηση του στρατού ⚔️</button>
-                            <button onclick="wrongAnswer('player5')">Εκτέλεση θρησκευτικών τελετών 🙏</button>
+                            <button onclick="correctAnswer('player5', 1)">Συντήρηση και εξοπλισμός ενός πολεμικού σκάφους</button>
+                            <button onclick="wrongAnswer('player5')">Ένα είδος φορολογίας για τους δούλους</button>
                         </div>
                     </div>
                     <div id="player5-step2" class="section" style="display: none;">
-                        <p class="question">Ποιος ήταν ο ρόλος της Ειρήνης του Καλλία;</p>
+                        <p class="question">2. Ποιος ήταν ο ρόλος των παιδαγωγών;</p>
                         <div class="answers">
-                            <button onclick="wrongAnswer('player5')">Ενοποίηση των ελληνικών πόλεων 🏛️</button>
-                            <button onclick="correctAnswer('player5', 'step2', 'step3')">Εξασφάλιση ειρήνης με τους Πέρσες 🌍</button>
-                            <button onclick="wrongAnswer('player5')">Αύξηση του εμπορίου 💰</button>
+                            <button onclick="correctAnswer('player5', 2)">Έμπιστος δούλος συνοδός του μαθητή</button>
+                            <button onclick="wrongAnswer('player5')">Δάσκαλος γυμναστικής</button>
                         </div>
                     </div>
                     <div id="player5-step3" class="section" style="display: none;">
-                        <p class="question">Ποιος ήταν ο ρόλος της Εκκλησίας του Δήμου;</p>
+                        <p class="question">3. Τι ήταν τα Ανθεστήρια;</p>
                         <div class="answers">
-                            <button onclick="wrongAnswer('player5')">Διοίκηση του στρατού ⚔️</button>
-                            <button onclick="correctAnswer('player5', 'step3', null)">Έπαιρνε αποφάσεις για τους νόμους και την πολιτική 📜</button>
-                            <button onclick="wrongAnswer('player5')">Εκτέλεση θρησκευτικών τελετών 🙏</button>
+                            <button onclick="correctAnswer('player5', 3)">Μια από τις μικρότερες γιορτές της Αθήνας</button>
+                            <button onclick="wrongAnswer('player5')">Ένας ετήσιος αγώνας δρόμου</button>
+                        </div>
+                    </div>
+                    <div id="player5-step4" class="section" style="display: none;">
+                        <p class="question">4. Ποιος ήταν ο ρόλος των κιθαριστών;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player5', 4)">Δίδασκαν μουσική</button>
+                            <button onclick="wrongAnswer('player5')">Διοίκηση των δικαστηρίων</button>
+                        </div>
+                    </div>
+                    <div id="player5-step5" class="section" style="display: none;">
+                        <p class="question">5. Τι ήταν η εστίαση;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player5', 5)">Παροχή χρημάτων για δημόσια γεύματα</button>
+                            <button onclick="wrongAnswer('player5')">Ένα είδος στρατιωτικής εκπαίδευσης</button>
+                        </div>
+                    </div>
+                    <div id="player5-step6" class="section" style="display: none;">
+                        <p class="question">6. Ποιος ήταν ο ρόλος των γυναικών στην Αθήνα;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player5', 6)">Αποκλειστική φροντίδα του σπιτιού και των παιδιών</button>
+                            <button onclick="wrongAnswer('player5')">Είχαν δικαίωμα ψήφου</button>
+                        </div>
+                    </div>
+                    <div id="player5-step7" class="section" style="display: none;">
+                        <p class="question">7. Τι ήταν τα Μικρά Παναθήναια;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player5', 7)">Γιορτή προς τιμήν της Αθηνάς κάθε χρόνο</button>
+                            <button onclick="wrongAnswer('player5')">Ένας ετήσιος αγώνας δρόμου</button>
+                        </div>
+                    </div>
+                    <div id="player5-step8" class="section" style="display: none;">
+                        <p class="question">8. Ποιος ήταν ο ρόλος των σοφιστών;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player5', 8)">Δίδασκαν την ρητορική τέχνη</button>
+                            <button onclick="wrongAnswer('player5')">Διοίκηση των δικαστηρίων</button>
+                        </div>
+                    </div>
+                    <div id="player5-step9" class="section" style="display: none;">
+                        <p class="question">9. Τι ήταν η θεωρία;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player5', 9)">Έξοδα για αποστολή αντιπροσωπειών σε θρησκευτικές γιορτές</button>
+                            <button onclick="wrongAnswer('player5')">Ένα είδος φορολογίας για τους δούλους</button>
+                        </div>
+                    </div>
+                    <div id="player5-step10" class="section" style="display: none;">
+                        <p class="question">10. Τι ήταν η εφηβεία;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player5', 10)">Περίοδος στρατιωτικής εκπαίδευσης από 18–20 ετών</button>
+                            <button onclick="wrongAnswer('player5')">Ένα είδος πολιτιστικής εκδήλωσης</button>
                         </div>
                     </div>
                 </div>
