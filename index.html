@@ -13,7 +13,7 @@
             color: #f0e6d2; /* Ανοιχτό κίτρινο */
         }
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: auto;
             background: rgba(0, 0, 0, 0.8); /* Μαύρο με διαφάνεια */
             padding: 20px;
@@ -27,29 +27,31 @@
         .player-section {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 20px;
+            gap: 10px; /* Απόσταση μεταξύ των στηλών */
         }
         .player {
-            width: 48%;
+            width: 23%; /* 4 στήλες */
             padding: 10px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
+            border: 2px solid #ffcc00; /* Χρυσό περίγραμμα */
+            box-shadow: 0px 0px 10px rgba(255, 215, 0, 0.3); /* Χρυσή σκιά */
         }
         .question {
             font-weight: bold;
             margin-top: 10px;
-            font-size: 20px;
+            font-size: 14px; /* Μικρότερο μέγεθος γραμματοσειράς */
             color: #ffcc00; /* Χρυσό */
         }
         .answers button {
-            margin: 10px;
-            padding: 15px 20px;
+            margin: 5px;
+            padding: 10px;
             cursor: pointer;
             border: none;
             background: #444444; /* Σκούρο γκρι */
             color: #f0e6d2; /* Ανοιχτό κίτρινο */
-            border-radius: 10px;
-            font-size: 16px;
+            border-radius: 5px;
+            font-size: 12px; /* Μικρότερο μέγεθος γραμματοσειράς */
             transition: background 0.3s ease;
         }
         .answers button:hover {
@@ -61,15 +63,15 @@
             background: rgba(255, 215, 0, 0.1); /* Χρυσό με διαφάνεια */
             padding: 15px;
             border-radius: 10px;
-            font-size: 18px;
+            font-size: 16px; /* Μικρότερο μέγεθος γραμματοσειράς */
             color: #f0e6d2; /* Ανοιχτό κίτρινο */
         }
         .emoji {
-            font-size: 28px;
-            margin: 5px;
+            font-size: 20px; /* Μικρότερο μέγεθος emoticons */
+            margin: 3px;
         }
         .feedback {
-            font-size: 18px;
+            font-size: 14px; /* Μικρότερο μέγεθος γραμματοσειράς */
             font-weight: bold;
             margin-top: 10px;
         }
@@ -80,7 +82,7 @@
             color: #ff0000; /* Κόκκινο */
         }
         .winner-message {
-            font-size: 24px;
+            font-size: 20px; /* Μικρότερο μέγεθος γραμματοσειράς */
             font-weight: bold;
             color: #ffcc00; /* Χρυσό */
             margin-top: 20px;
@@ -88,9 +90,8 @@
         }
     </style>
     <script>
-        let activePlayers = 2; // Αρχικός αριθμός ενεργών παικτών
-        let player1Completed = false;
-        let player2Completed = false;
+        let activePlayers = 4; // Αρχικός αριθμός ενεργών παικτών
+        const playerCompleted = [false, false, false, false]; // Κατάσταση ολοκλήρωσης για κάθε παίκτη
 
         function showNextStep(player, stepId) {
             document.getElementById(`${player}-${stepId}`).style.display = 'block';
@@ -106,16 +107,14 @@
                 showNextStep(player, nextStepId);
             } else {
                 // Ο παίκτης ολοκλήρωσε το παιχνίδι
-                if (player === "player1") {
-                    player1Completed = true;
-                } else if (player === "player2") {
-                    player2Completed = true;
-                }
+                const playerIndex = parseInt(player.replace("player", "")) - 1;
+                playerCompleted[playerIndex] = true;
 
                 // Έλεγχος αν ένας παίκτης έχει ολοκληρώσει πρώτος
-                if (player1Completed || player2Completed) {
+                if (playerCompleted.includes(true)) {
                     activePlayers = 0; // Απενεργοποίηση όλων των παικτών
-                    const winner = player1Completed ? "Παίκτης 1" : "Παίκτης 2";
+                    const winnerIndex = playerCompleted.indexOf(true);
+                    const winner = `Παίκτης ${winnerIndex + 1}`;
                     document.getElementById("winner-message").innerText = `🏆 ${winner} νίκησε! 🎉`;
                     document.getElementById("winner-message").style.display = "block";
                 }
@@ -132,7 +131,7 @@
     <div class="container">
         <h1>🏁 Αγώνας Δρόμου: Το Μυστήριο της Χρυσής Σφραγίδας 🔍</h1>
         <p class="scene">Η Αθήνα είναι σε αναταραχή! 🏛️🔥 Η Χρυσή Σφραγίδα, το σύμβολο της δημοκρατίας και της εξουσίας της Εκκλησίας του Δήμου, εξαφανίστηκε! Χωρίς αυτήν, οι αποφάσεις της Εκκλησίας δεν μπορούν να επικυρωθούν. 
-        Δύο παίκτες θα ανταγωνιστούν για να λύσουν το μυστήριο πρώτοι! 🕵️‍♂️🔎</p>
+        Τέσσερις παίκτες θα ανταγωνιστούν για να λύσουν το μυστήριο πρώτοι! 🕵️‍♂️🔎</p>
 
         <div class="player-section">
             <!-- Παίκτης 1 -->
@@ -192,6 +191,64 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Παίκτης 3 -->
+            <div class="player" id="player3">
+                <h2>Παίκτης 3 🌿</h2>
+                <div id="player3-step1" class="section">
+                    <p class="question">Ποιος ήταν ο σκοπός των Μεγάλων Παναθηναίων;</p>
+                    <div class="answers">
+                        <button onclick="correctAnswer('player3', 'step1', 'step2')">Ψυχαγωγία των πολιτών και επίδειξη δύναμης 🎭</button>
+                        <button onclick="wrongAnswer('player3')">Εορτασμός της νίκης επί των Περσών ⚔️</button>
+                        <button onclick="wrongAnswer('player3')">Εμπόριο 💰</button>
+                    </div>
+                </div>
+                <div id="player3-step2" class="section" style="display: none;">
+                    <p class="question">Ποιος ήταν ο σκοπός της εκπαίδευσης στην αρχαία Αθήνα;</p>
+                    <div class="answers">
+                        <button onclick="wrongAnswer('player3')">Στρατιωτική εκπαίδευση ⚔️</button>
+                        <button onclick="correctAnswer('player3', 'step2', 'step3')">Αρμονική καλλιέργεια σώματος και πνεύματος 🧠</button>
+                        <button onclick="wrongAnswer('player3')">Θρησκευτική εκπαίδευση 🙏</button>
+                    </div>
+                </div>
+                <div id="player3-step3" class="section" style="display: none;">
+                    <p class="question">Ποιος ήταν ο ρόλος της Βουλής των Πεντακοσίων;</p>
+                    <div class="answers">
+                        <button onclick="wrongAnswer('player3')">Διοικούσε τον στρατό ⚔️</button>
+                        <button onclick="correctAnswer('player3', 'step3', null)">Προετοίμαζε τα κείμενα των νόμων 📜</button>
+                        <button onclick="wrongAnswer('player3')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Παίκτης 4 -->
+            <div class="player" id="player4">
+                <h2>Παίκτης 4 🌟</h2>
+                <div id="player4-step1" class="section">
+                    <p class="question">Ποιος ήταν ο ρόλος των θεωρικών;</p>
+                    <div class="answers">
+                        <button onclick="correctAnswer('player4', 'step1', 'step2')">Επίδομα για τους φτωχούς ώστε να παρακολουθούν θέατρο 🎟️</button>
+                        <button onclick="wrongAnswer('player4')">Φόρος στους ξένους εμπόρους 💰</button>
+                        <button onclick="wrongAnswer('player4')">Αμοιβή στρατηγών ⚔️</button>
+                    </div>
+                </div>
+                <div id="player4-step2" class="section" style="display: none;">
+                    <p class="question">Ποιος ήταν ο ρόλος των δούλων στην Αθήνα;</p>
+                    <div class="answers">
+                        <button onclick="wrongAnswer('player4')">Διοικούσαν τον στρατό ⚔️</button>
+                        <button onclick="correctAnswer('player4', 'step2', 'step3')">Εργάζονταν σε διάφορες εργασίες 🛠️</button>
+                        <button onclick="wrongAnswer('player4')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
+                    </div>
+                </div>
+                <div id="player4-step3" class="section" style="display: none;">
+                    <p class="question">Ποιος ήταν ο σκοπός της Ειρήνης του Καλλία;</p>
+                    <div class="answers">
+                        <button onclick="wrongAnswer('player4')">Ενοποίηση των ελληνικών πόλεων 🏛️</button>
+                        <button onclick="correctAnswer('player4', 'step3', null)">Εξασφάλιση ειρήνης με τους Πέρσες 🌍</button>
+                        <button onclick="wrongAnswer('player4')">Αύξηση του εμπορίου 💰</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Μήνυμα Νικητή -->
@@ -203,6 +260,8 @@
         window.onload = function() {
             showNextStep('player1', 'step1');
             showNextStep('player2', 'step1');
+            showNextStep('player3', 'step1');
+            showNextStep('player4', 'step1');
         };
     </script>
 </body>
