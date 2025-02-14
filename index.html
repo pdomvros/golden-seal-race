@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Αγώνας Δρόμου: Το Μυστήριο της Χρυσής Σφραγίδας</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #1a1a1a, #333333); /* Σκούρο γκρι */
+            text-align: center;
+            padding: 20px;
+            color: #f0e6d2; /* Ανοιχτό κίτρινο */
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: rgba(0, 0, 0, 0.8); /* Μαύρο με διαφάνεια */
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0px 0px 20px rgba(255, 215, 0, 0.5); /* Χρυσή σκιά */
+        }
+        h1, h2 {
+            color: #ffcc00; /* Χρυσό */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .player-section {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .player {
+            width: 48%;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .question {
+            font-weight: bold;
+            margin-top: 10px;
+            font-size: 20px;
+            color: #ffcc00; /* Χρυσό */
+        }
+        .answers button {
+            margin: 10px;
+            padding: 15px 20px;
+            cursor: pointer;
+            border: none;
+            background: #444444; /* Σκούρο γκρι */
+            color: #f0e6d2; /* Ανοιχτό κίτρινο */
+            border-radius: 10px;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+        .answers button:hover {
+            background: #666666; /* Ανοιχτότερο γκρι */
+        }
+        .scene {
+            font-style: italic;
+            margin-bottom: 20px;
+            background: rgba(255, 215, 0, 0.1); /* Χρυσό με διαφάνεια */
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 18px;
+            color: #f0e6d2; /* Ανοιχτό κίτρινο */
+        }
+        .emoji {
+            font-size: 28px;
+            margin: 5px;
+        }
+        .feedback {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .correct {
+            color: #00ff00; /* Πράσινο */
+        }
+        .incorrect {
+            color: #ff0000; /* Κόκκινο */
+        }
+        .winner-message {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffcc00; /* Χρυσό */
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+    <script>
+        let activePlayers = 2; // Αρχικός αριθμός ενεργών παικτών
+        let player1Completed = false;
+        let player2Completed = false;
+
+        function showNextStep(player, stepId) {
+            document.getElementById(`${player}-${stepId}`).style.display = 'block';
+        }
+
+        function correctAnswer(player, stepId, nextStepId) {
+            // Εμφάνιση μηνύματος επιτυχίας
+            alert(`Παίκτης ${player}: Σωστή απάντηση! 🎉`);
+
+            // Απόκρυψη του τρέχοντος βήματος και εμφάνιση του επόμενου
+            document.getElementById(`${player}-${stepId}`).style.display = 'none';
+            if (nextStepId) {
+                showNextStep(player, nextStepId);
+            } else {
+                // Ο παίκτης ολοκλήρωσε το παιχνίδι
+                if (player === "player1") {
+                    player1Completed = true;
+                } else if (player === "player2") {
+                    player2Completed = true;
+                }
+
+                // Έλεγχος αν ένας παίκτης έχει ολοκληρώσει πρώτος
+                if (player1Completed || player2Completed) {
+                    activePlayers = 0; // Απενεργοποίηση όλων των παικτών
+                    const winner = player1Completed ? "Παίκτης 1" : "Παίκτης 2";
+                    document.getElementById("winner-message").innerText = `🏆 ${winner} νίκησε! 🎉`;
+                    document.getElementById("winner-message").style.display = "block";
+                }
+            }
+        }
+
+        function wrongAnswer(player) {
+            alert(`Παίκτης ${player}: Λάθος απάντηση! 😕 Δοκιμάστε ξανά.`);
+        }
+    </script>
+</head>
+<body>
+    <h3>Δημιουργία: Παναγιώτης Δόμβρος 2025 (CC BY-NC)</h3>
+    <div class="container">
+        <h1>🏁 Αγώνας Δρόμου: Το Μυστήριο της Χρυσής Σφραγίδας 🔍</h1>
+        <p class="scene">Η Αθήνα είναι σε αναταραχή! 🏛️🔥 Η Χρυσή Σφραγίδα, το σύμβολο της δημοκρατίας και της εξουσίας της Εκκλησίας του Δήμου, εξαφανίστηκε! Χωρίς αυτήν, οι αποφάσεις της Εκκλησίας δεν μπορούν να επικυρωθούν. 
+        Δύο παίκτες θα ανταγωνιστούν για να λύσουν το μυστήριο πρώτοι! 🕵️‍♂️🔎</p>
+
+        <div class="player-section">
+            <!-- Παίκτης 1 -->
+            <div class="player" id="player1">
+                <h2>Παίκτης 1 🎀</h2>
+                <div id="player1-step1" class="section">
+                    <p class="question">Ποιος ήταν ο ρόλος της Εκκλησίας του Δήμου στην αρχαία Αθήνα;</p>
+                    <div class="answers">
+                        <button onclick="correctAnswer('player1', 'step1', 'step2')">Έπαιρνε αποφάσεις για τους νόμους και την πολιτική 📜</button>
+                        <button onclick="wrongAnswer('player1')">Διοικούσε τον στρατό ⚔️</button>
+                        <button onclick="wrongAnswer('player1')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
+                    </div>
+                </div>
+                <div id="player1-step2" class="section" style="display: none;">
+                    <p class="question">Ποιος ήταν ο ρόλος του Άρειου Πάγου πριν τις μεταρρυθμίσεις του Εφιάλτη;</p>
+                    <div class="answers">
+                        <button onclick="wrongAnswer('player1')">Διοικούσε τον στρατό ⚔️</button>
+                        <button onclick="correctAnswer('player1', 'step2', 'step3')">Ασκούσε δικαστική και πολιτική εξουσία 🏛️</button>
+                        <button onclick="wrongAnswer('player1')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
+                    </div>
+                </div>
+                <div id="player1-step3" class="section" style="display: none;">
+                    <p class="question">Ποιος ήταν ο ρόλος της Βουλής των Πεντακοσίων;</p>
+                    <div class="answers">
+                        <button onclick="wrongAnswer('player1')">Διοικούσε τον στρατό ⚔️</button>
+                        <button onclick="correctAnswer('player1', 'step3', null)">Προετοίμαζε τα κείμενα των νόμων 📜</button>
+                        <button onclick="wrongAnswer('player1')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Παίκτης 2 -->
+            <div class="player" id="player2">
+                <h2>Παίκτης 2 🌊</h2>
+                <div id="player2-step1" class="section">
+                    <p class="question">Ποιος ήταν ο ρόλος των στρατηγών στην Αθήνα;</p>
+                    <div class="answers">
+                        <button onclick="correctAnswer('player2', 'step1', 'step2')">Διοικούσαν τον στρατό και σχεδίαζαν εξωτερική πολιτική 🌍</button>
+                        <button onclick="wrongAnswer('player2')">Ασκούσαν δικαστική εξουσία ⚖️</button>
+                        <button onclick="wrongAnswer('player2')">Επέβαλλαν φόρους 💰</button>
+                    </div>
+                </div>
+                <div id="player2-step2" class="section" style="display: none;">
+                    <p class="question">Ποιος ήταν ο ρόλος της Ηλιαίας;</p>
+                    <div class="answers">
+                        <button onclick="wrongAnswer('player2')">Διοικούσε τον στρατό ⚔️</button>
+                        <button onclick="correctAnswer('player2', 'step2', 'step3')">Ασκούσε δικαστική εξουσία ⚖️</button>
+                        <button onclick="wrongAnswer('player2')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
+                    </div>
+                </div>
+                <div id="player2-step3" class="section" style="display: none;">
+                    <p class="question">Ποιος ήταν ο ρόλος των μετοίκων στην Αθήνα;</p>
+                    <div class="answers">
+                        <button onclick="wrongAnswer('player2')">Διοικούσαν τον στρατό ⚔️</button>
+                        <button onclick="correctAnswer('player2', 'step3', null)">Ασχολούνταν με το εμπόριο και τη βιοτεχνία 🛍️</button>
+                        <button onclick="wrongAnswer('player2')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Μήνυμα Νικητή -->
+        <div id="winner-message" class="winner-message"></div>
+    </div>
+
+    <script>
+        // Εμφάνιση του πρώτου βήματος για κάθε παίκτη κατά τη φόρτωση της σελίδας
+        window.onload = function() {
+            showNextStep('player1', 'step1');
+            showNextStep('player2', 'step1');
+        };
+    </script>
+</body>
+</html>
