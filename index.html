@@ -7,100 +7,100 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(to bottom, #1a1a1a, #333333); /* Σκούρο γκρι */
+            background: linear-gradient(to bottom, #1a1a1a, #333333);
             text-align: center;
             padding: 20px;
-            color: #f0e6d2; /* Ανοιχτό κίτρινο */
+            color: #f0e6d2;
         }
         .container {
             max-width: 1200px;
             margin: auto;
-            background: rgba(0, 0, 0, 0.8); /* Μαύρο με διαφάνεια */
+            background: rgba(0, 0, 0, 0.8);
             padding: 20px;
             border-radius: 15px;
-            box-shadow: 0px 0px 20px rgba(255, 215, 0, 0.5); /* Χρυσή σκιά */
+            box-shadow: 0px 0px 20px rgba(255, 215, 0, 0.5);
         }
         h1, h2 {
-            color: #ffcc00; /* Χρυσό */
+            color: #ffcc00;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
         .player-section {
             display: flex;
             justify-content: space-between;
-            gap: 10px; /* Απόσταση μεταξύ των στηλών */
+            gap: 10px;
         }
         .player {
-            width: 23%; /* 4 στήλες */
+            width: 18%; /* 5 στήλες */
             padding: 10px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
-            border: 2px solid #ffcc00; /* Χρυσό περίγραμμα */
-            box-shadow: 0px 0px 10px rgba(255, 215, 0, 0.3); /* Χρυσή σκιά */
+            border: 2px solid #ffcc00;
+            box-shadow: 0px 0px 10px rgba(255, 215, 0, 0.3);
         }
         .question {
             font-weight: bold;
             margin-top: 10px;
-            font-size: 14px; /* Μικρότερο μέγεθος γραμματοσειράς */
-            color: #ffcc00; /* Χρυσό */
+            font-size: 14px;
+            color: #ffcc00;
         }
         .answers button {
             margin: 5px;
             padding: 10px;
             cursor: pointer;
             border: none;
-            background: #444444; /* Σκούρο γκρι */
-            color: #f0e6d2; /* Ανοιχτό κίτρινο */
+            background: #444444;
+            color: #f0e6d2;
             border-radius: 5px;
-            font-size: 12px; /* Μικρότερο μέγεθος γραμματοσειράς */
+            font-size: 12px;
             transition: background 0.3s ease;
         }
         .answers button:hover {
-            background: #666666; /* Ανοιχτότερο γκρι */
+            background: #666666;
         }
         .scene {
             font-style: italic;
             margin-bottom: 20px;
-            background: rgba(255, 215, 0, 0.1); /* Χρυσό με διαφάνεια */
+            background: rgba(255, 215, 0, 0.1);
             padding: 15px;
             border-radius: 10px;
-            font-size: 16px; /* Μικρότερο μέγεθος γραμματοσειράς */
-            color: #f0e6d2; /* Ανοιχτό κίτρινο */
+            font-size: 16px;
+            color: #f0e6d2;
         }
         .emoji {
-            font-size: 20px; /* Μικρότερο μέγεθος emoticons */
+            font-size: 20px;
             margin: 3px;
         }
         .feedback {
-            font-size: 14px; /* Μικρότερο μέγεθος γραμματοσειράς */
+            font-size: 14px;
             font-weight: bold;
             margin-top: 10px;
         }
         .correct {
-            color: #00ff00; /* Πράσινο */
+            color: #00ff00;
         }
         .incorrect {
-            color: #ff0000; /* Κόκκινο */
+            color: #ff0000;
         }
         .winner-message {
-            font-size: 20px; /* Μικρότερο μέγεθος γραμματοσειράς */
+            font-size: 20px;
             font-weight: bold;
-            color: #ffcc00; /* Χρυσό */
+            color: #ffcc00;
             margin-top: 20px;
             display: none;
         }
+        .player-select {
+            margin-bottom: 20px;
+        }
     </style>
     <script>
-        let activePlayers = 4; // Αρχικός αριθμός ενεργών παικτών
-        const playerCompleted = [false, false, false, false]; // Κατάσταση ολοκλήρωσης για κάθε παίκτη
+        let activePlayers = 0; // Αρχικός αριθμός ενεργών παικτών
+        const playerCompleted = [false, false, false, false, false]; // Κατάσταση ολοκλήρωσης για κάθε παίκτη
 
         function showNextStep(player, stepId) {
             document.getElementById(`${player}-${stepId}`).style.display = 'block';
         }
 
         function correctAnswer(player, stepId, nextStepId) {
-            // Εμφάνιση μηνύματος επιτυχίας
-            alert(`Παίκτης ${player}: Σωστή απάντηση! 🎉`);
-
             // Απόκρυψη του τρέχοντος βήματος και εμφάνιση του επόμενου
             document.getElementById(`${player}-${stepId}`).style.display = 'none';
             if (nextStepId) {
@@ -122,7 +122,21 @@
         }
 
         function wrongAnswer(player) {
-            alert(`Παίκτης ${player}: Λάθος απάντηση! 😕 Δοκιμάστε ξανά.`);
+            // Αναπαραγωγή του ήχου αποτυχίας
+            const failSound = document.getElementById("fail-sound");
+            failSound.play();
+        }
+
+        function startGame() {
+            const numPlayers = document.getElementById("num-players").value;
+            activePlayers = numPlayers;
+            document.getElementById("player-select").style.display = "none";
+            document.getElementById("game-container").style.display = "block";
+
+            // Εμφάνιση του πρώτου βήματος για κάθε παίκτη
+            for (let i = 1; i <= numPlayers; i++) {
+                showNextStep(`player${i}`, 'step1');
+            }
         }
     </script>
 </head>
@@ -131,137 +145,181 @@
     <div class="container">
         <h1>🏁 Αγώνας Δρόμου: Το Μυστήριο της Χρυσής Σφραγίδας 🔍</h1>
         <p class="scene">Η Αθήνα είναι σε αναταραχή! 🏛️🔥 Η Χρυσή Σφραγίδα, το σύμβολο της δημοκρατίας και της εξουσίας της Εκκλησίας του Δήμου, εξαφανίστηκε! Χωρίς αυτήν, οι αποφάσεις της Εκκλησίας δεν μπορούν να επικυρωθούν. 
-        Τέσσερις παίκτες θα ανταγωνιστούν για να λύσουν το μυστήριο πρώτοι! 🕵️‍♂️🔎</p>
+        Πέντε παίκτες θα ανταγωνιστούν για να λύσουν το μυστήριο πρώτοι! 🕵️‍♂️🔎</p>
 
-        <div class="player-section">
-            <!-- Παίκτης 1 -->
-            <div class="player" id="player1">
-                <h2>Παίκτης 1 🎀</h2>
-                <div id="player1-step1" class="section">
-                    <p class="question">Ποιος ήταν ο ρόλος της Εκκλησίας του Δήμου στην αρχαία Αθήνα;</p>
-                    <div class="answers">
-                        <button onclick="correctAnswer('player1', 'step1', 'step2')">Έπαιρνε αποφάσεις για τους νόμους και την πολιτική 📜</button>
-                        <button onclick="wrongAnswer('player1')">Διοικούσε τον στρατό ⚔️</button>
-                        <button onclick="wrongAnswer('player1')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
-                    </div>
-                </div>
-                <div id="player1-step2" class="section" style="display: none;">
-                    <p class="question">Ποιος ήταν ο ρόλος του Άρειου Πάγου πριν τις μεταρρυθμίσεις του Εφιάλτη;</p>
-                    <div class="answers">
-                        <button onclick="wrongAnswer('player1')">Διοικούσε τον στρατό ⚔️</button>
-                        <button onclick="correctAnswer('player1', 'step2', 'step3')">Ασκούσε δικαστική και πολιτική εξουσία 🏛️</button>
-                        <button onclick="wrongAnswer('player1')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
-                    </div>
-                </div>
-                <div id="player1-step3" class="section" style="display: none;">
-                    <p class="question">Ποιος ήταν ο ρόλος της Βουλής των Πεντακοσίων;</p>
-                    <div class="answers">
-                        <button onclick="wrongAnswer('player1')">Διοικούσε τον στρατό ⚔️</button>
-                        <button onclick="correctAnswer('player1', 'step3', null)">Προετοίμαζε τα κείμενα των νόμων 📜</button>
-                        <button onclick="wrongAnswer('player1')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Παίκτης 2 -->
-            <div class="player" id="player2">
-                <h2>Παίκτης 2 🌊</h2>
-                <div id="player2-step1" class="section">
-                    <p class="question">Ποιος ήταν ο ρόλος των στρατηγών στην Αθήνα;</p>
-                    <div class="answers">
-                        <button onclick="correctAnswer('player2', 'step1', 'step2')">Διοικούσαν τον στρατό και σχεδίαζαν εξωτερική πολιτική 🌍</button>
-                        <button onclick="wrongAnswer('player2')">Ασκούσαν δικαστική εξουσία ⚖️</button>
-                        <button onclick="wrongAnswer('player2')">Επέβαλλαν φόρους 💰</button>
-                    </div>
-                </div>
-                <div id="player2-step2" class="section" style="display: none;">
-                    <p class="question">Ποιος ήταν ο ρόλος της Ηλιαίας;</p>
-                    <div class="answers">
-                        <button onclick="wrongAnswer('player2')">Διοικούσε τον στρατό ⚔️</button>
-                        <button onclick="correctAnswer('player2', 'step2', 'step3')">Ασκούσε δικαστική εξουσία ⚖️</button>
-                        <button onclick="wrongAnswer('player2')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
-                    </div>
-                </div>
-                <div id="player2-step3" class="section" style="display: none;">
-                    <p class="question">Ποιος ήταν ο ρόλος των μετοίκων στην Αθήνα;</p>
-                    <div class="answers">
-                        <button onclick="wrongAnswer('player2')">Διοικούσαν τον στρατό ⚔️</button>
-                        <button onclick="correctAnswer('player2', 'step3', null)">Ασχολούνταν με το εμπόριο και τη βιοτεχνία 🛍️</button>
-                        <button onclick="wrongAnswer('player2')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Παίκτης 3 -->
-            <div class="player" id="player3">
-                <h2>Παίκτης 3 🌿</h2>
-                <div id="player3-step1" class="section">
-                    <p class="question">Ποιος ήταν ο σκοπός των Μεγάλων Παναθηναίων;</p>
-                    <div class="answers">
-                        <button onclick="correctAnswer('player3', 'step1', 'step2')">Ψυχαγωγία των πολιτών και επίδειξη δύναμης 🎭</button>
-                        <button onclick="wrongAnswer('player3')">Εορτασμός της νίκης επί των Περσών ⚔️</button>
-                        <button onclick="wrongAnswer('player3')">Εμπόριο 💰</button>
-                    </div>
-                </div>
-                <div id="player3-step2" class="section" style="display: none;">
-                    <p class="question">Ποιος ήταν ο σκοπός της εκπαίδευσης στην αρχαία Αθήνα;</p>
-                    <div class="answers">
-                        <button onclick="wrongAnswer('player3')">Στρατιωτική εκπαίδευση ⚔️</button>
-                        <button onclick="correctAnswer('player3', 'step2', 'step3')">Αρμονική καλλιέργεια σώματος και πνεύματος 🧠</button>
-                        <button onclick="wrongAnswer('player3')">Θρησκευτική εκπαίδευση 🙏</button>
-                    </div>
-                </div>
-                <div id="player3-step3" class="section" style="display: none;">
-                    <p class="question">Ποιος ήταν ο ρόλος της Βουλής των Πεντακοσίων;</p>
-                    <div class="answers">
-                        <button onclick="wrongAnswer('player3')">Διοικούσε τον στρατό ⚔️</button>
-                        <button onclick="correctAnswer('player3', 'step3', null)">Προετοίμαζε τα κείμενα των νόμων 📜</button>
-                        <button onclick="wrongAnswer('player3')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Παίκτης 4 -->
-            <div class="player" id="player4">
-                <h2>Παίκτης 4 🌟</h2>
-                <div id="player4-step1" class="section">
-                    <p class="question">Ποιος ήταν ο ρόλος των θεωρικών;</p>
-                    <div class="answers">
-                        <button onclick="correctAnswer('player4', 'step1', 'step2')">Επίδομα για τους φτωχούς ώστε να παρακολουθούν θέατρο 🎟️</button>
-                        <button onclick="wrongAnswer('player4')">Φόρος στους ξένους εμπόρους 💰</button>
-                        <button onclick="wrongAnswer('player4')">Αμοιβή στρατηγών ⚔️</button>
-                    </div>
-                </div>
-                <div id="player4-step2" class="section" style="display: none;">
-                    <p class="question">Ποιος ήταν ο ρόλος των δούλων στην Αθήνα;</p>
-                    <div class="answers">
-                        <button onclick="wrongAnswer('player4')">Διοικούσαν τον στρατό ⚔️</button>
-                        <button onclick="correctAnswer('player4', 'step2', 'step3')">Εργάζονταν σε διάφορες εργασίες 🛠️</button>
-                        <button onclick="wrongAnswer('player4')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
-                    </div>
-                </div>
-                <div id="player4-step3" class="section" style="display: none;">
-                    <p class="question">Ποιος ήταν ο σκοπός της Ειρήνης του Καλλία;</p>
-                    <div class="answers">
-                        <button onclick="wrongAnswer('player4')">Ενοποίηση των ελληνικών πόλεων 🏛️</button>
-                        <button onclick="correctAnswer('player4', 'step3', null)">Εξασφάλιση ειρήνης με τους Πέρσες 🌍</button>
-                        <button onclick="wrongAnswer('player4')">Αύξηση του εμπορίου 💰</button>
-                    </div>
-                </div>
-            </div>
+        <div id="player-select" class="player-select">
+            <label for="num-players">Επιλέξτε αριθμό παικτών (1-5):</label>
+            <select id="num-players">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+            <button onclick="startGame()">Έναρξη Παιχνιδιού</button>
         </div>
 
-        <!-- Μήνυμα Νικητή -->
-        <div id="winner-message" class="winner-message"></div>
+        <div id="game-container" style="display: none;">
+            <div class="player-section">
+                <!-- Παίκτης 1 -->
+                <div class="player" id="player1">
+                    <h2>Παίκτης 1 🎀</h2>
+                    <div id="player1-step1" class="section">
+                        <p class="question">Ποιος ήταν ο ρόλος της Εκκλησίας του Δήμου στην αρχαία Αθήνα;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player1', 'step1', 'step2')">Έπαιρνε αποφάσεις για τους νόμους και την πολιτική 📜</button>
+                            <button onclick="wrongAnswer('player1')">Διοικούσε τον στρατό ⚔️</button>
+                            <button onclick="wrongAnswer('player1')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
+                        </div>
+                    </div>
+                    <div id="player1-step2" class="section" style="display: none;">
+                        <p class="question">Ποιος ήταν ο ρόλος του Άρειου Πάγου πριν τις μεταρρυθμίσεις του Εφιάλτη;</p>
+                        <div class="answers">
+                            <button onclick="wrongAnswer('player1')">Διοικούσε τον στρατό ⚔️</button>
+                            <button onclick="correctAnswer('player1', 'step2', 'step3')">Ασκούσε δικαστική και πολιτική εξουσία 🏛️</button>
+                            <button onclick="wrongAnswer('player1')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
+                        </div>
+                    </div>
+                    <div id="player1-step3" class="section" style="display: none;">
+                        <p class="question">Ποιος ήταν ο ρόλος της Βουλής των Πεντακοσίων;</p>
+                        <div class="answers">
+                            <button onclick="wrongAnswer('player1')">Διοικούσε τον στρατό ⚔️</button>
+                            <button onclick="correctAnswer('player1', 'step3', null)">Προετοίμαζε τα κείμενα των νόμων 📜</button>
+                            <button onclick="wrongAnswer('player1')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Παίκτης 2 -->
+                <div class="player" id="player2">
+                    <h2>Παίκτης 2 🌊</h2>
+                    <div id="player2-step1" class="section">
+                        <p class="question">Ποιος ήταν ο ρόλος των στρατηγών στην Αθήνα;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player2', 'step1', 'step2')">Διοικούσαν τον στρατό και σχεδίαζαν εξωτερική πολιτική 🌍</button>
+                            <button onclick="wrongAnswer('player2')">Ασκούσαν δικαστική εξουσία ⚖️</button>
+                            <button onclick="wrongAnswer('player2')">Επέβαλλαν φόρους 💰</button>
+                        </div>
+                    </div>
+                    <div id="player2-step2" class="section" style="display: none;">
+                        <p class="question">Ποιος ήταν ο ρόλος της Ηλιαίας;</p>
+                        <div class="answers">
+                            <button onclick="wrongAnswer('player2')">Διοικούσε τον στρατό ⚔️</button>
+                            <button onclick="correctAnswer('player2', 'step2', 'step3')">Ασκούσε δικαστική εξουσία ⚖️</button>
+                            <button onclick="wrongAnswer('player2')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
+                        </div>
+                    </div>
+                    <div id="player2-step3" class="section" style="display: none;">
+                        <p class="question">Ποιος ήταν ο ρόλος των μετοίκων στην Αθήνα;</p>
+                        <div class="answers">
+                            <button onclick="wrongAnswer('player2')">Διοικούσαν τον στρατό ⚔️</button>
+                            <button onclick="correctAnswer('player2', 'step3', null)">Ασχολούνταν με το εμπόριο και τη βιοτεχνία 🛍️</button>
+                            <button onclick="wrongAnswer('player2')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Παίκτης 3 -->
+                <div class="player" id="player3">
+                    <h2>Παίκτης 3 🌿</h2>
+                    <div id="player3-step1" class="section">
+                        <p class="question">Ποιος ήταν ο σκοπός των Μεγάλων Παναθηναίων;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player3', 'step1', 'step2')">Ψυχαγωγία των πολιτών και επίδειξη δύναμης 🎭</button>
+                            <button onclick="wrongAnswer('player3')">Εορτασμός της νίκης επί των Περσών ⚔️</button>
+                            <button onclick="wrongAnswer('player3')">Εμπόριο 💰</button>
+                        </div>
+                    </div>
+                    <div id="player3-step2" class="section" style="display: none;">
+                        <p class="question">Ποιος ήταν ο σκοπός της εκπαίδευσης στην αρχαία Αθήνα;</p>
+                        <div class="answers">
+                            <button onclick="wrongAnswer('player3')">Στρατιωτική εκπαίδευση ⚔️</button>
+                            <button onclick="correctAnswer('player3', 'step2', 'step3')">Αρμονική καλλιέργεια σώματος και πνεύματος 🧠</button>
+                            <button onclick="wrongAnswer('player3')">Θρησκευτική εκπαίδευση 🙏</button>
+                        </div>
+                    </div>
+                    <div id="player3-step3" class="section" style="display: none;">
+                        <p class="question">Ποιος ήταν ο ρόλος της Βουλής των Πεντακοσίων;</p>
+                        <div class="answers">
+                            <button onclick="wrongAnswer('player3')">Διοικούσε τον στρατό ⚔️</button>
+                            <button onclick="correctAnswer('player3', 'step3', null)">Προετοίμαζε τα κείμενα των νόμων 📜</button>
+                            <button onclick="wrongAnswer('player3')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Παίκτης 4 -->
+                <div class="player" id="player4">
+                    <h2>Παίκτης 4 🌟</h2>
+                    <div id="player4-step1" class="section">
+                        <p class="question">Ποιος ήταν ο ρόλος των θεωρικών;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player4', 'step1', 'step2')">Επίδομα για τους φτωχούς ώστε να παρακολουθούν θέατρο 🎟️</button>
+                            <button onclick="wrongAnswer('player4')">Φόρος στους ξένους εμπόρους 💰</button>
+                            <button onclick="wrongAnswer('player4')">Αμοιβή στρατηγών ⚔️</button>
+                        </div>
+                    </div>
+                    <div id="player4-step2" class="section" style="display: none;">
+                        <p class="question">Ποιος ήταν ο ρόλος των δούλων στην Αθήνα;</p>
+                        <div class="answers">
+                            <button onclick="wrongAnswer('player4')">Διοικούσαν τον στρατό ⚔️</button>
+                            <button onclick="correctAnswer('player4', 'step2', 'step3')">Εργάζονταν σε διάφορες εργασίες 🛠️</button>
+                            <button onclick="wrongAnswer('player4')">Εκτελούσε θρησκευτικές τελετές 🙏</button>
+                        </div>
+                    </div>
+                    <div id="player4-step3" class="section" style="display: none;">
+                        <p class="question">Ποιος ήταν ο σκοπός της Ειρήνης του Καλλία;</p>
+                        <div class="answers">
+                            <button onclick="wrongAnswer('player4')">Ενοποίηση των ελληνικών πόλεων 🏛️</button>
+                            <button onclick="correctAnswer('player4', 'step3', null)">Εξασφάλιση ειρήνης με τους Πέρσες 🌍</button>
+                            <button onclick="wrongAnswer('player4')">Αύξηση του εμπορίου 💰</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Παίκτης 5 -->
+                <div class="player" id="player5">
+                    <h2>Παίκτης 5 🌈</h2>
+                    <div id="player5-step1" class="section">
+                        <p class="question">Ποιος ήταν ο ρόλος των λειτουργιών στην Αθήνα;</p>
+                        <div class="answers">
+                            <button onclick="correctAnswer('player5', 'step1', 'step2')">Οικονομική βοήθεια από τους πλούσιους στο κράτος 💰</button>
+                            <button onclick="wrongAnswer('player5')">Διοίκηση του στρατού ⚔️</button>
+                            <button onclick="wrongAnswer('player5')">Εκτέλεση θρησκευτικών τελετών 🙏</button>
+                        </div>
+                    </div>
+                    <div id="player5-step2" class="section" style="display: none;">
+                        <p class="question">Ποιος ήταν ο ρόλος της Ειρήνης του Καλλία;</p>
+                        <div class="answers">
+                            <button onclick="wrongAnswer('player5')">Ενοποίηση των ελληνικών πόλεων 🏛️</button>
+                            <button onclick="correctAnswer('player5', 'step2', 'step3')">Εξασφάλιση ειρήνης με τους Πέρσες 🌍</button>
+                            <button onclick="wrongAnswer('player5')">Αύξηση του εμπορίου 💰</button>
+                        </div>
+                    </div>
+                    <div id="player5-step3" class="section" style="display: none;">
+                        <p class="question">Ποιος ήταν ο ρόλος της Εκκλησίας του Δήμου;</p>
+                        <div class="answers">
+                            <button onclick="wrongAnswer('player5')">Διοίκηση του στρατού ⚔️</button>
+                            <button onclick="correctAnswer('player5', 'step3', null)">Έπαιρνε αποφάσεις για τους νόμους και την πολιτική 📜</button>
+                            <button onclick="wrongAnswer('player5')">Εκτέλεση θρησκευτικών τελετών 🙏</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Μήνυμα Νικητή -->
+            <div id="winner-message" class="winner-message"></div>
+        </div>
     </div>
+
+    <!-- Ηχητικό εφέ για λάθος απάντηση -->
+    <audio id="fail-sound" src="fail-sound.mp3"></audio>
 
     <script>
         // Εμφάνιση του πρώτου βήματος για κάθε παίκτη κατά τη φόρτωση της σελίδας
         window.onload = function() {
-            showNextStep('player1', 'step1');
-            showNextStep('player2', 'step1');
-            showNextStep('player3', 'step1');
-            showNextStep('player4', 'step1');
+            document.getElementById("player-select").style.display = "block";
+            document.getElementById("game-container").style.display = "none";
         };
     </script>
 </body>
